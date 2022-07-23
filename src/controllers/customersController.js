@@ -2,10 +2,15 @@ import connection from "../dbStrategy/postgres.js";
 
 
 export async function getCustomers(req, res){
+    const cpf = req.query["cpf"];
+
     try{
-        const {rows: customers} = await connection.query(`
+        const {rows: customers} = !cpf ? await connection.query(`
         SELECT * FROM customers
-        `);
+        `) : await connection.query(`
+        SELECT * FROM customers
+        WHERE cpf LIKE $1
+        `, [`${cpf}%`]);
         res.send(customers);
     }catch(error){
         res.sendStatus(500);
