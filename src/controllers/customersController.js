@@ -2,6 +2,7 @@ import connection from "../dbStrategy/postgres.js";
 
 
 export async function getCustomers(req, res){
+
     const cpf = req.query["cpf"];
 
     try{
@@ -14,6 +15,26 @@ export async function getCustomers(req, res){
         res.send(customers);
     }catch(error){
         res.sendStatus(500);
+    }
+}
+
+export async function getCustomerById(req, res){
+    const id = req.params.id;
+    console.log(id);
+
+    try{
+        const {rows: user} = await connection.query(`
+            SELECT * FROM customers
+            WHERE id=$1
+        `, [id]);
+
+        if(user.length === 0){
+            return res.sendStatus(404);
+        }
+        return res.send(user);
+
+    }catch(error){
+        return res.sendStatus(500);
     }
 }
 
