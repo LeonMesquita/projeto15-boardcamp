@@ -14,13 +14,7 @@ export async function getCategories(req, res){
 }
 
 export async function addCategorie(req, res){
-    const {name} = req.body;
-    console.log(name);
-    const validate =  categorySchema.validate({name});
-    //verificar se ja existe uma categoria com esse nome
-    if(validate.error) {
-        return res.status(400).send("O nome da categoria deve ser informado!");
-    }
+    const name = res.locals.name;
     try{
         await connection.query(`
         INSERT INTO categories (name) VALUES ($1)
