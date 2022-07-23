@@ -1,14 +1,23 @@
+import { request } from "express";
 import connection from "../dbStrategy/postgres.js";
 
 
 
 export async function getGames(req, res){
-    try{
-        const {rows: games} = await connection.query(`
+    const name = req.query["name"];
+    const query = `
         SELECT g.*, c.name as "categoryName" FROM games g
         JOIN categories c
-        ON g."categoryId" = c.id
-        `);
+        ON g."categoryId" = c.id`
+    try{
+        const {rows: games} = name ?
+        await connection.query(`
+        ${query}
+        WHERE g.name LIKE $1
+        `,
+        [`%${name}%`]
+        ) :
+        await connection.query(query);
         res.send(games);
     }catch(error){
 
