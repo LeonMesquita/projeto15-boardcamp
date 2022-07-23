@@ -16,14 +16,7 @@ export async function getGames(req, res){
 }
 
 export async function addGame(req, res){
-    const gameBody = {
-        ...req.body,
-        stockTotal: Number(req.body.stockTotal),
-        categoryId: Number(req.body.categoryId),
-        pricePerDay: Number(req.body.pricePerDay),
-    }
-    //falta validar os campos
-
+    const gameBody = res.locals.gameBody;
     try{
         await connection.query(`
             INSERT INTO games (name, image, "stockTotal", "categoryId", "pricePerDay") VALUES ($1, $2, $3, $4, $5)
