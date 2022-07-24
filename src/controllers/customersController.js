@@ -40,7 +40,7 @@ export async function getCustomerById(req, res){
 
 
 export async function addCustomer(req, res){
-    const customerBody = req.body;
+    const customerBody = res.locals.customerBody;
 
     try{
         await connection.query(`
@@ -50,6 +50,7 @@ export async function addCustomer(req, res){
         );
         res.sendStatus(201);
     }catch(error){
+        console.log(error)
         res.sendStatus(500);
     }
 
