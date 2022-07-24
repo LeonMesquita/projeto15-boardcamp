@@ -3,15 +3,97 @@ import dayjs from 'dayjs';
 
 
 export async function getRentals(req, res){
+    const joinRentals = [];
     try{
         const {rows: rentals} = await connection.query(`
-            SELECT * FROM rentals
+            SELECT r.*, c.name as "customerName", g.name as "gameName", g."categoryId", cat.name as "categoryName" FROM rentals r
+            JOIN customers c
+            ON r."customerId" = c.id
+            JOIN games g
+            ON r."gameId" = g.id
+            JOIN categories cat
+            ON g."categoryId" = cat.id
         `);
-        res.send(rentals);
+       // console.log(rentals)
+
+        for(let cont = 0; cont < rentals.length; cont++){
+            const rental = rentals[cont];
+            const customer = {
+                id: rental.customerId,
+                name: rental.customerName
+            }
+            const game = {
+                id: rental.gameId,
+                name: rental.gameName,
+                categoryId: rental.categoryId,
+                categoryName: rental.categoryName
+            }
+            joinRentals.push(
+                {
+                    ...rental,
+                    customer,
+                    game
+                }
+            );
+
+            delete joinRentals[cont].customerName;
+            delete joinRentals[cont].gameName;
+            delete joinRentals[cont].categoryId;
+            delete joinRentals[cont].categoryName;
+        }
+
+       
+
+       console.log(joinRentals)
+        res.send(joinRentals);
     }catch(error){
         res.sendStatus(500);
     }
 }
+/*
+    game: {
+      id: 1,
+      name: 'Banco Imobiliário',
+      categoryId: 1,
+      categoryName: 'Estratégia'
+    }
+*/
+
+/*
+[
+  {
+    id: 1,
+    customerId: 1,
+    gameId: 1,
+    rentDate: '2021-06-20',
+    daysRented: 3,
+    returnDate: null, // troca pra uma data quando já devolvido
+    originalPrice: 4500,
+    delayFee: null,
+    customer: {
+     id: 1,
+     name: 'João Alfredo'
+    },
+    game: {
+      id: 1,
+      name: 'Banco Imobiliário',
+      categoryId: 1,
+      categoryName: 'Estratégia'
+    }
+  }
+]
+
+*/
+
+
+
+
+
+
+
+
+
+
 
 
 export async function addRental(req, res){
