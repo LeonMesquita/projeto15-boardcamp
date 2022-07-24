@@ -4,6 +4,8 @@ import categoriesRoutes from './routes/categoriesRoutes.js';
 import gamesRoutes from './routes/gamesRoutes.js';
 import customersRoutes from './routes/customersRoutes.js';
 import rentalsRoutes from './routes/rentalsRoutes.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 const app = express();
@@ -17,4 +19,5 @@ app.use(customersRoutes);
 app.use(rentalsRoutes);
 
 
-app.listen(4000, ( ) => {console.log('server running on port 4000')})
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, ( ) => {console.log(`server running on port ${PORT}`)})

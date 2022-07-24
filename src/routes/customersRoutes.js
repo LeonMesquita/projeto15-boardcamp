@@ -6,6 +6,6 @@ import {validateCustomer, checkCustomer} from '../middlewares/validateCustomer.j
 router.get('/customers', getCustomers);
 router.get('/customers/:id', checkCustomer, getCustomerById);
 router.post('/customers', validateCustomer, addCustomer);
-router.put('/customers/:id',validateCustomer, checkCustomer, updateCustomer);
+router.put('/customers/:id', checkCustomer,validateCustomer, updateCustomer);
 
 export default router;
