@@ -41,10 +41,6 @@ export async function checkRental(req, res, next){
     `,[id]);
 
 
-    if(rental[0].returnDate !== null){
-        return res.sendStatus(400);
-    }
-
     const {rows: game} = await connection.query(`
         SELECT * FROM games
         WHERE id= $1

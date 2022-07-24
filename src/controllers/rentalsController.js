@@ -79,8 +79,13 @@ export async function addRental(req, res){
 
 export async function finishRental(req, res){
     const rental = res.locals.rental;
+    if(rental[0].returnDate !== null){
+        return res.sendStatus(400);
+    }
+
     const game = res.locals.game;
     const returnDate = new Date();
+    
 
     const passedDays = ((returnDate - rental[0].rentDate)/ (1000 * 60 * 60 * 24)).toFixed(0);
     const delayFee = passedDays <= rental[0].daysRented ? 0
@@ -106,5 +111,19 @@ export async function finishRental(req, res){
 
 
 export async function deleteRental(req, res){
+    const rental = res.locals.rental;
+    if(rental[0].returnDate === null){
+        return res.sendStatus(400);
+    }
+
+    try{
+        await connection.query(`
+            DELETE FROM rentals
+            WHERE id = $1
+        `, [rental[0].id]);
+        return res.sendStatus(200);
+    }catch(error){
+        return res.sendStatus(500);
+    }
 
 }
