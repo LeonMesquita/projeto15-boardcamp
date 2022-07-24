@@ -19,9 +19,7 @@ export async function validateRental(req, res, next){
         WHERE g.id = $1
     `, [rent.gameId]);
 
-   // console.log(customer);
-  //  console.log(game)
-  console.log(rentals.length);
+
   const validate = rentalSchema.validate(rent);
 
     if(validate.error || customer.length === 0 || game.length === 0 || rentals.length >= game[0].stockTotal){
@@ -30,5 +28,34 @@ export async function validateRental(req, res, next){
 
     res.locals.rent = rent;
     res.locals.game = game;
+    next();
+}
+
+
+export async function checkRental(req, res, next){
+    const id = req.params.id;
+
+    const {rows: rental} = await connection.query(`
+        SELECT * FROM rentals
+        WHERE id=$1
+    `,[id]);
+
+
+    if(rental[0].returnDate !== null){
+        return res.sendStatus(400);
+    }
+
+    const {rows: game} = await connection.query(`
+        SELECT * FROM games
+        WHERE id= $1
+    `, [rental[0].gameId]);
+
+    if(rental.length === 0 || game.length === 0){
+        return res.sendStatus(404);
+    }
+    
+    res.locals.game = game;
+    res.locals.rental = rental;
+
     next();
 }
