@@ -19,18 +19,9 @@ export async function getCustomers(req, res){
 }
 
 export async function getCustomerById(req, res){
-    const id = req.params.id;
-    console.log(id);
-
+    const user = res.locals.user;
     try{
-        const {rows: user} = await connection.query(`
-            SELECT * FROM customers
-            WHERE id=$1
-        `, [id]);
-
-        if(user.length === 0){
-            return res.sendStatus(404);
-        }
+        
         return res.send(user);
 
     }catch(error){
@@ -54,6 +45,25 @@ export async function addCustomer(req, res){
         res.sendStatus(500);
     }
 
+}
+
+export async function updateCustomer(req, res){
+    const customerBody = res.locals.customerBody;
+    const user = res.locals.user;
+console.log(user);
+    console.log(customerBody);
+
+    try{
+        await connection.connect();
+        await connection.query(`
+            UPDATE "customers"
+            SET "name" = $1, "phone" = $2, "cpf" = $3, "birthday" = $4
+            WHERE "id" =$5
+        `,[customerBody.name, customerBody.phone, customerBody.cpf, customerBody.birthday, user.id]);
+    return res.sendStatus(201);
+    }catch(error){
+        return res.sendStatus(500);
+    }
 }
 
 /*
