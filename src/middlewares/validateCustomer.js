@@ -14,6 +14,7 @@ export async function validateCustomer(req, res, next){
     };
     const validate = customerSchema.validate(customerBody);
     if (validate.error){
+        console.log(validate.error)
         return res.sendStatus(400);
     }
 

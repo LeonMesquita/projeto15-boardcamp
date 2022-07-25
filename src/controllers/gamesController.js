@@ -4,11 +4,12 @@ import connection from "../dbStrategy/postgres.js";
 
 
 export async function getGames(req, res){
+    const newQuery = res.locals.newQuery;
     const name = req.query["name"];
     const query = `
         SELECT g.*, c.name as "categoryName" FROM games g
         JOIN categories c
-        ON g."categoryId" = c.id`
+        ON g."categoryId" = c.id ${newQuery}`
     try{
         const {rows: games} = name ?
         await connection.query(`

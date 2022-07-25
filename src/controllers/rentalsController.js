@@ -3,17 +3,22 @@ import dayjs from 'dayjs';
 
 
 export async function getRentals(req, res){
+    let newQuery = res.locals.newQuery;
+
     const joinRentals = [];
+    const query = `
+    SELECT r.*, c.name as "customerName", g.name as "gameName", g."categoryId", cat.name as "categoryName" FROM rentals r
+    JOIN customers c
+    ON r."customerId" = c.id
+    JOIN games g
+    ON r."gameId" = g.id
+    JOIN categories cat
+    ON g."categoryId" = cat.id
+    ${newQuery}
+`;
+console.log(query);
     try{
-        const {rows: rentals} = await connection.query(`
-            SELECT r.*, c.name as "customerName", g.name as "gameName", g."categoryId", cat.name as "categoryName" FROM rentals r
-            JOIN customers c
-            ON r."customerId" = c.id
-            JOIN games g
-            ON r."gameId" = g.id
-            JOIN categories cat
-            ON g."categoryId" = cat.id
-        `);
+        const {rows: rentals} = await connection.query(query);
         for(let cont = 0; cont < rentals.length; cont++){
             const rental = rentals[cont];
             const customer = {
