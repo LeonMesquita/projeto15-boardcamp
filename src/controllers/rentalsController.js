@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 
 export async function getRentals(req, res){
     let newQuery = res.locals.newQuery;
+    let rentalQuery = res.locals.rentalQuery;
+
 
     const joinRentals = [];
     const query = `
@@ -14,9 +16,10 @@ export async function getRentals(req, res){
     ON r."gameId" = g.id
     JOIN categories cat
     ON g."categoryId" = cat.id
+    ${rentalQuery}
     ${newQuery}
 `;
-console.log(query);
+
     try{
         const {rows: rentals} = await connection.query(query);
         for(let cont = 0; cont < rentals.length; cont++){
