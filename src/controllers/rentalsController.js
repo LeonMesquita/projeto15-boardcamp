@@ -139,7 +139,7 @@ export async function getMetrics(req, res){
     const startDate = req.query["startDate"];
     const endDate = req.query["endDate"];
     let revenueQuery = `SELECT SUM ("originalPrice") FROM rentals`;
-    let rentalsQuery = `SELECT COUNT (id) FROM rentals`;
+    let rentalsQuery = `SELECT COUNT (*) FROM rentals`;
     if(startDate && endDate){
         const date = ` WHERE "rentDate" BETWEEN ${`'${startDate}'`} AND  ${`'${endDate}'`}`
         revenueQuery += date;
@@ -161,7 +161,6 @@ export async function getMetrics(req, res){
        const {rows: revenue} = await connection.query(revenueQuery);
        const {rows: rentals} = await connection.query(rentalsQuery);
         const average = (revenue[0].sum/rentals[0].count).toFixed(2);
-        console.log(average);
         res.send({
             revenue: revenue[0].sum,
             rentals: rentals[0].count,
