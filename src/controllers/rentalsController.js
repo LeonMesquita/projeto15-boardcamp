@@ -44,6 +44,7 @@ console.log(query);
             delete joinRentals[cont].categoryId;
             delete joinRentals[cont].categoryName;
         }
+        console.log(joinRentals[0])
 
         res.send(joinRentals);
     }catch(error){
