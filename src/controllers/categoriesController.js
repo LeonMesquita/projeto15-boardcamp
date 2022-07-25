@@ -6,6 +6,7 @@ export async function getCategories(req, res){
     let newQuery = res.locals.newQuery;
 
     const query =  `SELECT * FROM categories ${newQuery}`;
+    console.log(query)
     try{
         const {rows: categories} = await connection.query(query);
         res.send(categories);
